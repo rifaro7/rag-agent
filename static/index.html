@@ -71,14 +71,24 @@ form.addEventListener('submit', async (e) => {
   form.querySelector('button').disabled = true;
 
   try {
-    const res = await fetch('/chat', {
+    const res = await fetch('/chat/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message, session_id: sessionId }),
     });
-    const data = await res.json();
-    pending.textContent = data.reply;
+    if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+    pending.textContent = '';
     pending.classList.remove('pending');
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      pending.textContent += decoder.decode(value, { stream: true });
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    if (!pending.textContent) pending.textContent = '(no response)';
   } catch (err) {
     pending.textContent = 'Error: ' + err.message;
     pending.classList.remove('pending');
