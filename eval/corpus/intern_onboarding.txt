@@ -1,0 +1,14 @@
+Summer Intern Onboarding Checklist
+
+Day 1: Interns receive a temporary laptop and are added to the intern Slack
+channel only, not the full company workspace. Security training is
+completed within the first week.
+
+Week 1: Each intern is paired with a buddy (not a formal mentor) who checks
+in twice a week for the first month.
+
+Final review: Interns receive a single end-of-internship review at the
+10-week mark, which informs return-offer decisions.
+
+Interns are expected to complete one small project by the end of the
+internship, not a solo production feature.

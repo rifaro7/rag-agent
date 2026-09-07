@@ -1,0 +1,14 @@
+Nimbus API — Rate Limits and Authentication
+
+The Nimbus API authenticates requests using a bearer token passed in the
+Authorization header. Tokens are issued from the developer dashboard and
+expire after 90 days of inactivity.
+
+Free-tier accounts are limited to 120 requests per minute and 5,000 requests
+per day. Pro-tier accounts are limited to 1,000 requests per minute and have
+no daily cap. Requests that exceed the per-minute limit receive an HTTP 429
+response with a Retry-After header indicating how many seconds to wait.
+
+Batch endpoints (paths under /v1/batch/) count as a single request regardless
+of how many items are included in the batch body, up to a maximum of 500
+items per batch call.

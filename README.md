@@ -20,7 +20,10 @@ Agent loop (app/agent.py)  ──calls──▶  Claude (tool-calling)
 app/tools.py:  search_documents (RAG) · web_search · calculator
         │
         ▼
-ChromaDB vector store (app/rag.py) ── populated by app/ingest.py
+ChromaDB vector search (top 15) ── populated by app/ingest.py
+        │
+        ▼
+cross-encoder re-ranking (top 4) ── app/rag.py
 ```
 
 Each turn, the app sends the conversation to Claude along with a list of
@@ -28,6 +31,15 @@ tool definitions. Claude either replies directly, or asks to call a tool
 (e.g. `search_documents`). The backend runs that tool in Python, feeds the
 result back to Claude as a new message, and repeats until Claude has enough
 information to give a final answer.
+
+Retrieval is two-stage rather than a single vector lookup: Chroma's cosine
+similarity pulls a wide pool of 15 candidates cheaply, then a cross-encoder
+(`cross-encoder/ms-marco-MiniLM-L-6-v2`) re-scores each candidate against the
+actual question and keeps the top 4. Vector similarity compares two
+independent embeddings; a cross-encoder reads the question and the candidate
+passage together, which is slower per-comparison but generally more precise
+— the standard fix for cases where topically-similar-but-wrong passages
+outrank the one that actually answers the question.
 
 ## Setup
 
@@ -74,6 +86,38 @@ container's disk isn't guaranteed to persist across restarts, so
 small document set, but swap in a managed vector DB (e.g. Pinecone) or a
 persistent volume for a larger corpus.
 
+## Retrieval quality (measured, not assumed)
+
+`eval/` holds a small, self-contained evaluation: 6 synthetic documents
+(including deliberate near-duplicate "distractor" pairs — two API docs, two
+leave policies, two onboarding checklists that share vocabulary but differ
+in specifics) and 13 questions, some paraphrased to avoid reusing the
+source's exact wording. It runs against its own in-memory Chroma collection,
+never touching your real `chroma_db/`.
+
+```bash
+python -m eval.run_eval
+```
+
+Actual output on this corpus:
+
+```
+recall@4                                                            13/13      13/13
+mean reciprocal rank                                                1.000      1.000
+```
+
+Both plain vector search and the cross-encoder re-ranker land every question
+in first place. That's an honest result, not the one I expected to write
+down — and it's informative rather than a failure: at 6 documents, there
+just isn't enough ambiguity in the embedding space for re-ranking to have
+anything to correct. The value of an eval harness isn't only "prove the
+optimization helped" — it's catching exactly this, that a change everyone
+assumes is an improvement may not move the needle at a given scale, before
+you ship it based on intuition. Re-ranking is worth keeping anyway because
+its advantage shows up as the candidate pool gets larger or noisier than a
+6-document demo corpus; the harness is what would tell you if or when that
+stops being true for your real document set.
+
 ## Design notes
 
 - **RAG over stuffing the prompt**: keeps token usage and cost bounded as
@@ -88,7 +132,7 @@ persistent volume for a larger corpus.
 ## Roadmap
 
 - Swap the in-memory session store for Redis/Postgres
-- Add an eval set (sample questions + expected answers) to measure
-  retrieval quality
+- Grow `eval/` until it actually discriminates between retrieval strategies
+  (larger corpus, harder distractors) rather than saturating
 - Swap ChromaDB for a managed vector DB (Pinecone/pgvector) for larger,
   persistent corpora

@@ -1,0 +1,14 @@
+New Engineer Onboarding Checklist
+
+Day 1: IT provisions a laptop and creates accounts for email, Slack, and the
+internal wiki. New hires complete security training within the first 3 days.
+
+Week 1: A mentor is assigned from within the new hire's team. The mentor and
+new hire meet daily for the first two weeks, then move to a weekly check-in.
+
+30-60-90 review: Managers hold a formal check-in at the 30-day, 60-day, and
+90-day marks. The 90-day review determines whether the initial probationary
+period is completed successfully.
+
+Engineers are expected to ship their first small pull request within the
+first two weeks and their first solo feature within the first quarter.

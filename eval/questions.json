@@ -1,0 +1,67 @@
+[
+  {
+    "question": "How many requests per minute is a free-tier Nimbus account allowed?",
+    "expected_source": "nimbus_api.txt",
+    "expected_keywords": ["120"]
+  },
+  {
+    "question": "What happens if I go over the Nimbus API's per-minute limit?",
+    "expected_source": "nimbus_api.txt",
+    "expected_keywords": ["429"]
+  },
+  {
+    "question": "What's the largest number of items I can put in one Nimbus batch call?",
+    "expected_source": "nimbus_api.txt",
+    "expected_keywords": ["500"]
+  },
+  {
+    "question": "How much paid time off do employees earn each month?",
+    "expected_source": "leave_policy.txt",
+    "expected_keywords": ["1.5"]
+  },
+  {
+    "question": "Does unused vacation time roll over into next year at Widget Corp?",
+    "expected_source": "leave_policy.txt",
+    "expected_keywords": ["5"]
+  },
+  {
+    "question": "How long is paid leave for the primary parent after having a baby?",
+    "expected_source": "leave_policy.txt",
+    "expected_keywords": ["16"]
+  },
+  {
+    "question": "When does a new hire get their laptop set up?",
+    "expected_source": "onboarding_checklist.txt",
+    "expected_keywords": ["Day 1"]
+  },
+  {
+    "question": "How often do new engineers meet with their mentor after the first two weeks?",
+    "expected_source": "onboarding_checklist.txt",
+    "expected_keywords": ["weekly"]
+  },
+  {
+    "question": "What milestone decides if a new engineer passes probation?",
+    "expected_source": "onboarding_checklist.txt",
+    "expected_keywords": ["90-day"]
+  },
+  {
+    "question": "Which document explains what happens when a contract worker needs time off without pay?",
+    "expected_source": "contractor_leave.txt",
+    "expected_keywords": ["5"]
+  },
+  {
+    "question": "How long can someone's contract be put on hold before it counts as ended?",
+    "expected_source": "contractor_leave.txt",
+    "expected_keywords": ["30"]
+  },
+  {
+    "question": "How often does one service rotate its access credentials automatically?",
+    "expected_source": "comet_api.txt",
+    "expected_keywords": ["60"]
+  },
+  {
+    "question": "What's the ceiling on how many separate things can go into a single grouped request?",
+    "expected_source": "nimbus_api.txt",
+    "expected_keywords": ["500"]
+  }
+]

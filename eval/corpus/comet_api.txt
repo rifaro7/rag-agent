@@ -1,0 +1,12 @@
+Comet API — Rate Limits and Authentication
+
+The Comet API authenticates requests using an API key passed as a query
+parameter. Keys are rotated automatically every 60 days.
+
+Free-tier accounts are limited to 60 requests per minute and 2,000 requests
+per day. Enterprise-tier accounts are limited to 3,000 requests per minute
+and have no daily cap. Requests that exceed the limit receive an HTTP 503
+response.
+
+Batch endpoints count each item in the batch as a separate request, up to a
+maximum of 100 items per call.

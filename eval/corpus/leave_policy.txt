@@ -1,0 +1,12 @@
+Widget Corp — Employee Leave Policy
+
+Full-time employees accrue 1.5 days of paid time off per month, capped at 18
+days per calendar year. Unused PTO up to 5 days may be carried over into the
+next year; anything beyond that is forfeited on December 31st.
+
+Sick leave is tracked separately from PTO: employees receive 10 sick days
+per year, which do not carry over and do not require advance notice.
+
+Parental leave is 16 weeks paid for the primary caregiver and 6 weeks paid
+for a secondary caregiver, and may be taken any time within the first 12
+months after the child's birth or adoption.
