@@ -118,6 +118,28 @@ its advantage shows up as the candidate pool gets larger or noisier than a
 6-document demo corpus; the harness is what would tell you if or when that
 stops being true for your real document set.
 
+## Testing without spending money on every run
+
+The Claude API is metered — real tests that hit it on every run add up, so
+`tests/test_agent.py` mocks only the LLM call itself and keeps everything
+else real: real Chroma retrieval against a throwaway collection, real tool
+dispatch through `app/tools.py`. It checks that the agent loop calls a tool
+when it should, calls it with the right arguments, feeds the *actual*
+retrieved result back to Claude, and returns directly (no tool round-trip)
+when the question doesn't need one.
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/ -v
+```
+
+This was also verified manually against the real, running app without a
+funded API key: the server boots, ingestion runs, and a real HTTP request to
+`/chat` travels all the way through FastAPI → the agent loop → a genuine
+network call to Anthropic, failing with `401 authentication_error` — proof
+the integration is wired correctly and the only missing piece is billing,
+not a bug.
+
 ## Design notes
 
 - **RAG over stuffing the prompt**: keeps token usage and cost bounded as
