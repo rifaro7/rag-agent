@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RAG Agent</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 100px;
+    background: #f7f7f8;
+  }
+  h1 { font-size: 1.25rem; color: #333; }
+  #log { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .msg { padding: 10px 14px; border-radius: 12px; max-width: 80%; white-space: pre-wrap; line-height: 1.4; }
+  .user { align-self: flex-end; background: #2563eb; color: white; }
+  .assistant { align-self: flex-start; background: white; border: 1px solid #e0e0e0; color: #222; }
+  .pending { opacity: 0.6; font-style: italic; }
+  form {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; gap: 8px; padding: 12px; background: #f7f7f8;
+    border-top: 1px solid #e0e0e0;
+  }
+  form > div { max-width: 720px; margin: 0 auto; display: flex; gap: 8px; width: 100%; }
+  input {
+    flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
+  }
+  button {
+    padding: 10px 18px; border-radius: 8px; border: none; background: #2563eb; color: white;
+    font-size: 1rem; cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; cursor: default; }
+</style>
+</head>
+<body>
+<h1>RAG Agent — chat with your documents</h1>
+<div id="log"></div>
+
+<form id="form">
+  <div>
+    <input id="input" type="text" placeholder="Ask something..." autocomplete="off" />
+    <button type="submit">Send</button>
+  </div>
+</form>
+
+<script>
+const log = document.getElementById('log');
+const form = document.getElementById('form');
+const input = document.getElementById('input');
+const sessionId = crypto.randomUUID();
+
+function addMessage(text, role) {
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.textContent = text;
+  log.appendChild(div);
+  window.scrollTo(0, document.body.scrollHeight);
+  return div;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  addMessage(message, 'user');
+  input.value = '';
+  const pending = addMessage('Thinking...', 'assistant');
+  pending.classList.add('pending');
+  form.querySelector('button').disabled = true;
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, session_id: sessionId }),
+    });
+    const data = await res.json();
+    pending.textContent = data.reply;
+    pending.classList.remove('pending');
+  } catch (err) {
+    pending.textContent = 'Error: ' + err.message;
+    pending.classList.remove('pending');
+  } finally {
+    form.querySelector('button').disabled = false;
+    input.focus();
+  }
+});
+</script>
+</body>
+</html>
